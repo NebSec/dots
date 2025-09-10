@@ -11,13 +11,12 @@ git clone --recurse-submodules git@github.com:you/dots.git
 ## Updating upstream
 
 ```bash
-cd st
+cd ~/dots/suckless/st
 git checkout master
 git pull origin master
-cd ../dwm
+
+cd ~/dots/suckless/st
 git checkout master
 git pull origin master
-cd ..
-./build.sh
 ```
 
