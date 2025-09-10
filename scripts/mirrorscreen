@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+INTERNAL_DISPLAY=$(xrandr --listmonitors | grep '*' | awk {'print $4'})
+EXTERNAL_MONITOR=$(xrandr --query | awk '/ connected/ && !/eDP-1/ {print $1}' | head -n 1)
+
+if [[ -n $EXTERNAL_MONITOR ]]; then
+    xrandr --output $EXTERNAL_MONITOR --mode 1920x1080 --same-as $INTERNAL_DISPLAY 
+    echo "Mirroring screen $INTERNAL_DISPLAY to $EXTERNAL_MONITOR"
+else
+    echo "No external monitor detected."
+fi
+

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+SCRIPT_NAME="setscreens"
+
+xrandr --output DP-3-1-5 --mode 1920x1080 --rate 119.98 --primary --auto \
+       --output DP-3-2 --mode 1920x1080 --rate 119.98 --right-of DP-3-1-5 --auto \
+       --output eDP-1 --off --auto 
+
+source ~/.fehbg
+
+echo "Configured monitors for -h"
+
