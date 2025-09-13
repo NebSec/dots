@@ -1,38 +1,54 @@
 #!/bin/sh
 
-export GTK_IM_MODULE=xim
-export XMODIFIERS="@im=none"
+xrdb="xrdb"
+xinitdir="/etc/X11/xinit"
+xmodmap="xmodmap"
 
-userresources=$HOME/.Xresources
-sysresources=/etc/X11/xinit/.Xresources
+userresources="$HOME/.Xresources"
+usermodmap="$HOME/.Xmodmap"
+sysresources="$xinitdir/.Xresources"
+sysmodmap="$xinitdir/.Xmodmap"
 
 # merge in defaults and keymaps
 
-if [ -f $sysresources ]; then
-    xrdb -merge $sysresources
+if [ -f "$sysresources" ]; then
+    if [ -x /usr/bin/cpp ] ; then
+        "$xrdb" -merge "$sysresources"
+    else
+        "$xrdb" -nocpp -merge "$sysresources"
+    fi
+fi
+
+if [ -f "$sysmodmap" ]; then
+    "$xmodmap" "$sysmodmap"
 fi
 
 if [ -f "$userresources" ]; then
-    xrdb -merge "$userresources"
+    if [ -x /usr/bin/cpp ] ; then
+        "$xrdb" -merge "$userresources"
+    else
+        "$xrdb" -nocpp -merge "$userresources"
+    fi
 fi
 
-if [ -d /etc/X11/xinit/xinitrc.d ] ; then
- for f in /etc/X11/xinit/xinitrc.d/?*.sh ; do
-  [ -x "$f" ] && . "$f"
- done
- unset f
+if [ -f "$usermodmap" ]; then
+    "$xmodmap" "$usermodmap"
 fi
 
-feh --bg-center ~/dots/wallpapers/blackwp.png
+# start some nice programs
 
-xset dpms 0 0 0
+if [ -d "$xinitdir"/xinitrc.d ] ; then
+	for f in "$xinitdir/xinitrc.d"/?*.sh ; do
+		[ -x "$f" ] && . "$f"
+	done
+	unset f
+fi
 
 (
-    ~/dots/scripts/updates.sh &
-    slstatus &
-    picom &
+	slstatus &
+	picom &
 
-    trap 'kill $(jobs -p)' EXIT
+	trap 'kill $(jobs -p)' EXIT
 
-    exec dwm
+	exec dwm
 )
